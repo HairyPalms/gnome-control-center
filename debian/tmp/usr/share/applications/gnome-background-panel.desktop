@@ -1,0 +1,30 @@
+[Desktop Entry]
+Name=Appearance
+Name[be@latin]=Vyhlad
+Name[bn_IN]=চেহারা
+Name[br]=Neuz
+Name[dz]=འབྱུང་སྣང་
+Name[en@shaw]=𐑩𐑐𐑽𐑩𐑯𐑕
+Name[hr]=Izgled
+Name[ka]=გარემოს იერსახე
+Name[mai]=प्रकटन
+Name[ms]=Penampilan
+Name[nds]=utsehn
+Name[ne]=देखावट
+Name[nn]=Utsjånad
+Name[oc]=Aparéncia
+Name[sq]=Paraqitja
+Name[uz]=Tashqi koʻrinishi
+Name[uz@cyrillic]=Ташқи кўриниши
+Comment=Change the background and theme
+Comment[nn]=Endra bakgrunnen og temaet
+Exec=gnome-control-center background
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Settings;DesktopSettings;X-GNOME-Settings-Panel;X-GNOME-PersonalSettings
+OnlyShowIn=GNOME;Unity;
+X-GNOME-Settings-Panel=background
+# Translators: those are keywords for the background control-center panel
+Keywords=Wallpaper;Screen;Desktop;Theme;Appearance;Launcher;Unity;Menus;

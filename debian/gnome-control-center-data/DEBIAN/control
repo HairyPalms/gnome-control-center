@@ -1,0 +1,17 @@
+Package: gnome-control-center-data
+Source: gnome-control-center
+Version: 1:3.6.3-0ubuntu8~ubuntu12.10.1
+Architecture: all
+Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
+Installed-Size: 15737
+Recommends: gnome-control-center (>= 1:3.6.3-0ubuntu8~ubuntu12.10.1)
+Conflicts: capplets-data
+Breaks: gdm (<< 3.0), gdm3 (<< 3.0), gnome-power-manager (<< 3.2), gnome-settings-daemon (<< 3.0)
+Replaces: capplets-data, gdm (<< 3.0), gdm3 (<< 3.0), gnome-media-common (<< 2.91), gnome-power-manager (<< 3.2), gnome-settings-daemon (<< 3.0)
+Provides: capplets-data
+Section: gnome
+Priority: optional
+Description: configuration applets for GNOME - data files
+ This package contains data files (icons, pixmaps, locales files) needed by
+ the configuration applets in the gnome-control-center package.
+Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
