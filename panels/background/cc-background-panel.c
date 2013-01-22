@@ -18,7 +18,10 @@
  * Author: Thomas Wood <thomas.wood@intel.com>
  *
  */
-
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+//end of my includes
 #include <config.h>
 
 #include <string.h>
@@ -1228,8 +1231,8 @@ cc_background_panel_drag_uris (GtkWidget *widget,
   g_strfreev(uris);
 }
 
-static gchar *themes_id[] = { "Adwaita", "Ambiance", "Radiance", "HighContrast", "HighContrastInverse" };
-static gchar *themes_name[] = { "Adwaita", "Ambiance", "Radiance", "High Contrast", "High Contrast Inverse" };
+static gchar *themes_id[] = { "Adwaita", "Ambiance", "Radiance", "HighContrast", "TestingTheme", "HighContrastInverse" };
+static gchar *themes_name[] = { "Adwaita", "Ambiance", "Radiance", "High Contrast", "Adwaita-Melvis", "High Contrast Inverse" };
 
 static gboolean
 get_theme_data (const gchar *theme_name,
@@ -1239,6 +1242,7 @@ get_theme_data (const gchar *theme_name,
 		gchar **cursor_theme)
 {
   gchar *path;
+  gchar *userpath;
   GKeyFile *theme_file;
   GError *error = NULL;
   gboolean result = FALSE;
@@ -1247,8 +1251,23 @@ get_theme_data (const gchar *theme_name,
 
   theme_file = g_key_file_new ();
   path = g_build_filename ("/usr/share/themes", theme_name, "index.theme", NULL);
+
+  struct passwd *pw = getpwuid(getuid());
+  const char *homedir = pw->pw_dir;
+  userpath = g_build_filename (homedir, ".themes", theme_name, "index.theme", NULL);
   if (g_key_file_load_from_file (theme_file, path, G_KEY_FILE_NONE, &error))
     {
+      //printf("%s\n", path);
+      *gtk_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "GtkTheme", NULL);
+      *icon_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "IconTheme", NULL);
+      *window_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "MetacityTheme", NULL);
+      *cursor_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "CursorTheme", NULL);
+
+      result = TRUE;
+    }
+  else if (g_key_file_load_from_file (theme_file, userpath, G_KEY_FILE_NONE, &error))
+    {
+      //printf("%s\n", userpath);
       *gtk_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "GtkTheme", NULL);
       *icon_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "IconTheme", NULL);
       *window_theme = g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "MetacityTheme", NULL);
@@ -1288,6 +1307,47 @@ theme_selection_changed (GtkComboBox *combo, CcBackgroundPanel *self)
   g_settings_set_string (self->priv->interface_settings, "icon-theme", icon_theme);
   g_settings_set_string (self->priv->interface_settings, "cursor-theme", cursor_theme);
   g_settings_set_string (self->priv->wm_theme_settings, "theme", window_theme);
+
+
+  /* disable overlay scrollbars for a11y if installed*/
+  if (self->priv->canonical_interface_settings)
+    {
+      if (g_strcmp0 (gtk_theme, "HighContrast") == 0 ||
+          g_strcmp0 (gtk_theme, "HighContrastInverse") == 0)
+        g_settings_set_string (self->priv->canonical_interface_settings, "scrollbar-mode", "normal");
+      else
+        g_settings_reset (self->priv->canonical_interface_settings, "scrollbar-mode");
+      g_settings_apply (self->priv->canonical_interface_settings);
+    }
+
+  g_settings_apply (self->priv->interface_settings);
+
+  g_free (gtk_theme);
+  g_free (icon_theme);
+  g_free (window_theme);
+  g_free (cursor_theme);
+}
+
+static void
+icon_selection_changed (GtkComboBox *combo, CcBackgroundPanel *self)
+{
+  gint active;
+  gchar *gtk_theme, *icon_theme, *window_theme, *cursor_theme;
+
+  active = gtk_combo_box_get_active (combo);
+  g_return_if_fail (active >= 0 && active < G_N_ELEMENTS (themes_id));
+
+  if (!get_theme_data (gtk_combo_box_get_active_id (combo),
+                       &gtk_theme, &icon_theme, &window_theme, &cursor_theme))
+    return;
+  //&icon_theme = gtk_combo_box_get_text(combo)
+  g_settings_delay (self->priv->interface_settings);
+  g_settings_delay (self->priv->canonical_interface_settings);
+
+  //g_settings_set_string (self->priv->interface_settings, "gtk-theme", gtk_theme);
+  g_settings_set_string (self->priv->interface_settings, "icon-theme", icon_theme);
+  //g_settings_set_string (self->priv->interface_settings, "cursor-theme", cursor_theme);
+  //g_settings_set_string (self->priv->wm_theme_settings, "theme", window_theme);
 
 
   /* disable overlay scrollbars for a11y if installed*/
@@ -1380,6 +1440,80 @@ setup_theme_selector (CcBackgroundPanel *self)
 
     g_signal_connect (G_OBJECT (widget), "changed",
 		      G_CALLBACK (theme_selection_changed), self);
+}
+
+static void
+setup_icon_selector (CcBackgroundPanel *self)
+{
+  gchar *current_icon_theme;
+  gchar *default_icon_theme;
+  gint i, current_icon_index = 0;
+  GtkWidget *widget;
+  GtkWidget *liststore;
+  const gchar * const *schemas;
+  CcBackgroundPanelPrivate *priv = self->priv;
+  GSettings *defaults_settings = g_settings_new ("org.gnome.desktop.interface");
+
+  priv->interface_settings = g_settings_new ("org.gnome.desktop.interface");
+
+  schemas = g_settings_list_schemas ();
+  while (*schemas != NULL)
+    {
+      if (g_strcmp0 (*schemas, CANONICAL_DESKTOP_INTERFACE) == 0)
+        {
+          priv->canonical_interface_settings = g_settings_new (CANONICAL_DESKTOP_INTERFACE);
+          break;
+        }
+      schemas++;
+    }
+
+  priv->wm_theme_settings = g_settings_new ("org.gnome.desktop.wm.preferences");
+  current_icon_theme = g_settings_get_string (priv->interface_settings, "icon-theme");
+
+  /* gettint the default for the theme */
+  g_settings_delay (defaults_settings);
+  g_settings_reset (defaults_settings, "icon-theme");
+  default_icon_theme = g_settings_get_string (defaults_settings, "icon-theme");
+  g_object_unref (defaults_settings);
+
+  gtk_widget_set_visible (WID ("icon-box"), FALSE);
+  widget = WID ("icon-selector");
+  liststore = WID ("icon-list-store");
+
+  for (i = 0; i < G_N_ELEMENTS (themes_id); i++, current_icon_index++)
+    {
+      gchar *gtk_theme, *icon_theme, *window_theme, *cursor_theme, *new_theme_name;
+      GtkTreeIter iter;
+
+      if (!get_theme_data (themes_id[i], &gtk_theme, &icon_theme, &window_theme, &cursor_theme))
+        {
+          current_icon_index--;
+          continue;
+        }
+
+      if (g_strcmp0 (gtk_theme, default_icon_theme) == 0)
+        new_theme_name = g_strdup_printf ("%s <small><i>(%s)</i></small>", themes_name[i], _("default"));
+      else
+        new_theme_name = g_strdup (themes_name[i]);
+
+      gtk_list_store_append (GTK_LIST_STORE (liststore), &iter);
+      gtk_list_store_set (GTK_LIST_STORE (liststore), &iter, 0, themes_id[i], 1, new_theme_name, -1);
+
+      if (g_strcmp0 (gtk_theme, current_icon_theme) == 0)
+	  /* This is the current theme, so select item in the combo box */
+         gtk_combo_box_set_active (GTK_COMBO_BOX (widget), current_icon_index);
+
+      g_free (gtk_theme);
+      g_free (new_theme_name);
+      g_free (icon_theme);
+      g_free (window_theme);
+      g_free (cursor_theme);
+    }
+    g_free (current_icon_theme);
+    g_free (default_icon_theme);
+
+    g_signal_connect (G_OBJECT (widget), "changed",
+		      G_CALLBACK (icon_selection_changed), self);
 }
 
 static void
@@ -1869,6 +2003,9 @@ cc_background_panel_init (CcBackgroundPanel *self)
 
   /* Setup theme selector */
   setup_theme_selector (self);
+
+  /* Setup theme selector*/
+  setup_icon_selector (self);
 
   /* Setup unity settings */
   if (background_is_unity_session ())

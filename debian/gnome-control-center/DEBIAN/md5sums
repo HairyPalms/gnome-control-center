@@ -1,6 +1,6 @@
 2515b69edbd78db05db7a193263ffc27  usr/bin/gnome-control-center
 02a0ab4d460c1cf9e090065b8ec04b49  usr/bin/gnome-sound-applet
-6f808555e38629520d7b31ae41e8e865  usr/lib/control-center-1/panels/libbackground.so
+24e7d79a273973cd6c3279b1ce203554  usr/lib/control-center-1/panels/libbackground.so
 976a8e47a8d8426260b43440eb89a339  usr/lib/control-center-1/panels/libbluetooth.so
 760ea49e023c8ad784437111fe3632de  usr/lib/control-center-1/panels/libcolor.so
 306319d252799ea0d75d25555da12283  usr/lib/control-center-1/panels/libdate_time.so

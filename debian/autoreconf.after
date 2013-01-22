@@ -143,14 +143,13 @@ cfe1157705bad17968de19a650f6d659  ./shell/cc-shell-log.h
 387ed2c679a89b9b7f210913943049a5  ./shell/gnome-control-center.h
 ef1b9d35fdb118cbcb15523d971acd9c  ./shell/cc-shell.c
 de79eccca4c6679a74322cba47ef1ca4  ./shell/cc-shell-item-view.c
-0dfa0c656fea1acecebfae7a4629a525  ./shell/cc-shell-marshal.h
+809a9668165b98651eb0c734d978921f  ./shell/cc-shell-marshal.h
 42ac7a5b5725955ead7043405e3294f2  ./shell/cc-shell-item-view.h
 3fde969df16c1f5d8bd88d0c1582bf28  ./shell/cc-shell.h
 c14b29bd5f9afec872cf5d75fd248e8d  ./shell/TODO
-2ada470fcca8fe75c0f9240e10600eb9  ./shell/cc-shell-marshal.c
+b441e92db81bd10f4d10e92d5e699c9a  ./shell/cc-shell-marshal.c
 30446a524390fbb161e7d1ba2229ba51  ./shell/gnome-control-center.desktop.in.in
 0b96c40308f509ba2c0e132c1d2e70e7  ./config.sub
-8d68052727f43c2581d8165e09649ddb  ./config.h.in~
 75859989545e37968a99b631ef42722e  ./COPYING
 a8ecfed842a12a932d4a6b5d2f70ce40  ./Makefile.am
 58aae942190e709fe3381c044e43966c  ./Makefile.in
@@ -854,7 +853,6 @@ e1f97cc23568dc8309a015882c09f4b2  ./panels/user-accounts/um-crop-area.c
 3a5e6c0bdb8d95cd1cf5d0f5e3846da8  ./panels/user-accounts/um-editable-combo.h
 48cbff6c403a20f00add33a8d4fae10e  ./panels/user-accounts/um-password-dialog.c
 e8f7130be2b7de60bd881c7136bf10fc  ./panels/user-accounts/um-editable-combo.c
-b46096bb11f6abe02c3f9aef37bc60ca  ./panels/user-accounts/um-realm-generated.h
 7ebe1da870f27369688b10c991ba5a42  ./panels/user-accounts/um-account-dialog.c
 bd10a830ec0ac2d4f33a5b45a7302299  ./panels/user-accounts/run-passwd.h
 df0237f660231dba2c6fccddaa79b01b  ./panels/user-accounts/um-editable-button.h
@@ -936,7 +934,6 @@ acb2a056196b7d3bbc971bd5b74546c9  ./panels/user-accounts/um-user-manager.c
 a6d61d0abd6ac287e47e168ed64a3ebb  ./panels/user-accounts/um-realm-manager.c
 3540d00c5deaf22c63104b9fce23a2b9  ./panels/user-accounts/fingerprint-strings.h
 6201864f272b7d7e76adc95ff234a29d  ./panels/user-accounts/Makefile.in
-d978021d61ef1520f5f5aa020d780a7a  ./panels/user-accounts/um-realm-generated.c
 069ec612f7a28ec5579017bf85890c3c  ./panels/user-accounts/um-utils.c
 6d91f0cdef8099364497b8280ed763bb  ./panels/user-accounts/org.gnome.controlcenter.user-accounts.policy.in
 e330cfa48ac5bbed9928c4f48ef6fb13  ./panels/user-accounts/um-utils.h
@@ -970,8 +967,8 @@ e8b965530d8a87c8885db9f3b2020c85  ./panels/keyboard/Makefile.am
 55e93c93ab5b23ed788717cf0912e969  ./panels/keyboard/01-system.xml.in
 c4cf5f413f83e2d2b91cd1606f3ec866  ./panels/background/bg-source.h
 f843088a59485e21d6e3b72f55919d3b  ./panels/background/bg-flickr-source.c
+63481c447ffaf000e6ca9dfce5b80688  ./panels/background/background (original).ui
 a149e24a3608f75005fbc5439575e460  ./panels/background/slideshow-symbolic.svg
-bd124cd7d8c7468cda83a78dcafbf492  ./panels/background/gdesktop-enums-types.c
 8f8f3794349a28dd31c01668eb39c73d  ./panels/background/cc-background-item.c
 9f6a17876e1310ee47316f8d60971245  ./panels/background/bg-wallpapers-source.h
 972e540eed91314bc43bb461d62ec048  ./panels/background/bg-pictures-source.c
@@ -983,17 +980,16 @@ fec71f2e38a46c74c186f26d3301131b  ./panels/background/bg-colors-source.c
 56df6df37e9b59f66fb14d15677cbf79  ./panels/background/slideshow-emblem.svg
 5f5c587508f85f426e63f42d64f38775  ./panels/background/cc-background-xml.c
 087911b8cef5fc32ab0907996f4afdd5  ./panels/background/display-base.png
-9c47571698bbab6310cc85fa87a84222  ./panels/background/cc-background-panel.c
+09f06c7de9973113c477e38a2e11c4e8  ./panels/background/cc-background-panel.c
 7f673f53bc93b671aa4bd5d277aa77c3  ./panels/background/bg-source.c
 a0d5d5c582fd9fd4a42b5fca9796ef6b  ./panels/background/bg-colors-source.h
-5ec19e9538af861f116dc707d5e858a9  ./panels/background/background.ui
+866f3d314f1b057f07538204486a191a  ./panels/background/background.ui
 4867f0712b1984982e1c5a3717221ab3  ./panels/background/bg-flickr-source.h
 c1e805a548927406e9566fa6d6e8327c  ./panels/background/display-overlay.png
 484b12a0136e44891ac52e1c9a6903e3  ./panels/background/cc-background-item.h
 6a6993b2628b913136db66e9fa43e0ad  ./panels/background/bg-wallpapers-source.c
 dbfffca8ddc88c0744cd4b980dda1951  ./panels/background/cc-background-xml.h
 8c6d8381aafa1413dbdea8067639f80b  ./panels/background/bg-pictures-source.h
-a80b344c981e43fe62d78b0617335ea9  ./panels/background/gdesktop-enums-types.h
 4dc50f98eb4fbaad8f8bbbc0357f20a2  ./panels/background/background-module.c
 2f2f78281dcd52b92a5b6f58368c383d  ./panels/common/list-languages.c
 d71631d1ca37eb169d7c899d073cf8e0  ./panels/common/gdm-languages.c
