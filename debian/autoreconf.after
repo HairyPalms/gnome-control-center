@@ -150,8 +150,10 @@ c14b29bd5f9afec872cf5d75fd248e8d  ./shell/TODO
 b441e92db81bd10f4d10e92d5e699c9a  ./shell/cc-shell-marshal.c
 30446a524390fbb161e7d1ba2229ba51  ./shell/gnome-control-center.desktop.in.in
 0b96c40308f509ba2c0e132c1d2e70e7  ./config.sub
+ed8c6112069fbe6e0ae8e75649b5a3ed  ./config.h.in~
 75859989545e37968a99b631ef42722e  ./COPYING
 a8ecfed842a12a932d4a6b5d2f70ce40  ./Makefile.am
+6ac5051c7ef7dc86d67ceaf4a5d6ca18  ./output.txt
 58aae942190e709fe3381c044e43966c  ./Makefile.in
 161bf133ae2d14cecfe69f6701cf6379  ./compile
 f775cf4449f8f25e125b9c405e21381f  ./NEWS
@@ -980,7 +982,7 @@ fec71f2e38a46c74c186f26d3301131b  ./panels/background/bg-colors-source.c
 56df6df37e9b59f66fb14d15677cbf79  ./panels/background/slideshow-emblem.svg
 5f5c587508f85f426e63f42d64f38775  ./panels/background/cc-background-xml.c
 087911b8cef5fc32ab0907996f4afdd5  ./panels/background/display-base.png
-09f06c7de9973113c477e38a2e11c4e8  ./panels/background/cc-background-panel.c
+d1da0f11556dab4a0cdb8862e5a9c95a  ./panels/background/cc-background-panel.c
 7f673f53bc93b671aa4bd5d277aa77c3  ./panels/background/bg-source.c
 a0d5d5c582fd9fd4a42b5fca9796ef6b  ./panels/background/bg-colors-source.h
 866f3d314f1b057f07538204486a191a  ./panels/background/background.ui

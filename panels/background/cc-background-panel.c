@@ -18,6 +18,12 @@
  * Author: Thomas Wood <thomas.wood@intel.com>
  *
  */
+#include <sys/types.h>
+#include <dirent.h>
+#include <regex.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -46,6 +52,12 @@
 #define WP_SHADING_KEY "color-shading-type"
 #define WP_PCOLOR_KEY "primary-color"
 #define WP_SCOLOR_KEY "secondary-color"
+
+enum {
+    WALK_OK = 0,
+    WALK_BADPATTERN,
+    WALK_BADOPEN,
+};
 
 enum {
   COL_SOURCE_NAME,
@@ -1234,6 +1246,85 @@ cc_background_panel_drag_uris (GtkWidget *widget,
 static gchar *themes_id[] = { "Adwaita", "Ambiance", "Radiance", "HighContrast", "TestingTheme", "HighContrastInverse" };
 static gchar *themes_name[] = { "Adwaita", "Ambiance", "Radiance", "High Contrast", "Adwaita-Melvis", "High Contrast Inverse" };
 
+int walk_directories(const char *dir, const char *pattern, char strings[][100])
+{
+    struct dirent *entry;
+    regex_t reg;
+    DIR *d; 
+    int i = 0;
+    char *tempdname;
+
+
+    if (regcomp(&reg, pattern, REG_EXTENDED | REG_NOSUB))
+        return WALK_BADPATTERN;
+    if (!(d = opendir(dir)))
+        return WALK_BADOPEN;
+    while (entry = readdir(d))
+	{
+        if (!regexec(&reg, entry->d_name, 0, NULL, 0) )
+		tempdname = entry->d_name;
+		if( entry->d_type == DT_DIR && strcmp(entry->d_name,".") != 0 && strcmp(entry->d_name,"..") != 0)
+			{
+		       		//printf("%s\n",tempdname);
+				strcpy(strings[i], (tempdname));
+				i++;
+			}
+	}
+    closedir(d);
+    regfree(&reg);
+
+    return WALK_OK;
+}
+
+int dir_length(char *aDir)
+{
+	DIR *dp;
+	int i = 0;
+	struct dirent *ep;
+	dp = opendir (aDir);
+
+	if (dp != NULL)
+	{
+		while (ep = readdir (dp))
+			i++;
+		(void) closedir (dp);
+	}
+	i--;
+	i--;
+	return i;
+}
+
+void populate_themes()
+{
+  /*reading user and system theme directories*/
+	struct passwd *pw = getpwuid(getuid());
+	char *homedir = pw->pw_dir;
+	strcat(homedir, "/.themes");
+	int userdirlength = 0;
+	userdirlength = dir_length(homedir);
+	printf("\n%i\n",userdirlength);
+	int systemdirlength = 0;
+	systemdirlength = dir_length("/usr/share/themes");
+
+	int n;
+	gchar userarray[userdirlength][100];
+	gchar systemarray[systemdirlength][100];
+
+	//walk_directories(homedir, "", themes_id);
+	walk_directories("/usr/share/themes", "", systemarray);
+
+	for (n = 0; n < systemdirlength; n++)
+	{
+		//do stuff here later, but just print it for now
+		printf ("%s\n", systemarray[n]);
+	}
+	for (n = 0; n < userdirlength; n++)
+	{
+		//do stuff here later, but just print it for now
+		printf ("%s\n", userarray[n]);
+	}
+}
+
 static gboolean
 get_theme_data (const gchar *theme_name,
 		gchar **gtk_theme,
@@ -1863,6 +1954,8 @@ cc_background_panel_init (CcBackgroundPanel *self)
   GtkWidget *widget;
   GtkListStore *store;
   GtkStyleContext *context;
+  /*my functions called*/
+  populate_themes();
 
   priv = self->priv = BACKGROUND_PANEL_PRIVATE (self);
 
