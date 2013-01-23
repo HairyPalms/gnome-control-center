@@ -1243,17 +1243,23 @@ cc_background_panel_drag_uris (GtkWidget *widget,
   g_strfreev(uris);
 }
 
-static gchar *themes_id[] = { "Adwaita", "Ambiance", "Radiance", "HighContrast", "TestingTheme", "HighContrastInverse" };
-static gchar *themes_name[] = { "Adwaita", "Ambiance", "Radiance", "High Contrast", "Adwaita-Melvis", "High Contrast Inverse" };
+static gchar *themes_id[100];// = { "Adwaita", "Ambiance", "Radiance", "HighContrast", "TestingTheme", "HighContrastInverse" };
+static gchar *themes_name[100];// = { "Adwaita", "Ambiance", "Radiance", "High Contrast", "Adwaita-Melvis", "High Contrast Inverse" };
 
-int walk_directories(const char *dir, const char *pattern, char strings[][100])
+int walk_directories(const char *dir, const char *pattern, gchar theme_folders[][100], gchar theme_names[][100])
 {
     struct dirent *entry;
     regex_t reg;
     DIR *d; 
     int i = 0;
     char *tempdname;
+    FILE *file;
 
+    gchar *subdir = NULL;
+    GKeyFile *theme_file = NULL;
+    GError *error = NULL;
+
+    theme_file = g_key_file_new ();
 
     if (regcomp(&reg, pattern, REG_EXTENDED | REG_NOSUB))
         return WALK_BADPATTERN;
@@ -1265,16 +1271,34 @@ int walk_directories(const char *dir, const char *pattern, char strings[][100])
 		tempdname = entry->d_name;
 		if( entry->d_type == DT_DIR && strcmp(entry->d_name,".") != 0 && strcmp(entry->d_name,"..") != 0)
 			{
-		       		//printf("%s\n",tempdname);
-				strcpy(strings[i], (tempdname));
-				i++;
+				subdir = g_build_filename(dir, tempdname, "/index.theme", NULL);
+				if (g_key_file_load_from_file (theme_file, subdir, G_KEY_FILE_NONE, &error)){
+					if (g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "Name", NULL) != NULL){
+						g_strlcpy(theme_names[i], g_key_file_get_string (theme_file, "X-GNOME-Metatheme", "Name", NULL), 100);
+						strcpy(theme_folders[i], (tempdname));
+						i++;
+					}
+					else if (g_key_file_get_string (theme_file, "Desktop Entry", "Name", NULL) != NULL){
+						g_strlcpy(theme_names[i], g_key_file_get_string (theme_file, "Desktop Entry", "Name", NULL), 100);
+						strcpy(theme_folders[i], (tempdname));
+						i++;
+					}
+				}
+				else{
+					g_strlcpy(theme_names[i], "Empty", 100);
+					strcpy(theme_folders[i], "Empty");
+					i++;
+				}			
+				g_free (subdir);
+				error = NULL;
 			}
 	}
+    g_key_file_free (theme_file);
     closedir(d);
     regfree(&reg);
-
     return WALK_OK;
 }
+
 
 int dir_length(char *aDir)
 {
@@ -1296,32 +1320,76 @@ int dir_length(char *aDir)
 
 void populate_themes()
 {
-  /*reading user and system theme directories*/
+	char * f;
+	char * g;
+	int n = 0;
+	int systemdirlength = 0;
+	int validthemes = 0;
+	int userdirlength = 0;
+
 	struct passwd *pw = getpwuid(getuid());
 	char *homedir = pw->pw_dir;
 	strcat(homedir, "/.themes");
-	int userdirlength = 0;
 	userdirlength = dir_length(homedir);
-	printf("\n%i\n",userdirlength);
-	int systemdirlength = 0;
+
 	systemdirlength = dir_length("/usr/share/themes");
 
-	int n;
-	gchar userarray[userdirlength][100];
-	gchar systemarray[systemdirlength][100];
+	gchar userfolderarray[userdirlength][100];
+	gchar userthemenamearray[userdirlength][100];
+	gchar systemfolderarray[systemdirlength][100];
+	gchar systemthemenamearray[systemdirlength][100];
 
-	//walk_directories(homedir, "", themes_id);
-	walk_directories("/usr/share/themes", "", systemarray);
-
-	for (n = 0; n < systemdirlength; n++)
-	{
-		//do stuff here later, but just print it for now
-		printf ("%s\n", systemarray[n]);
-	}
+	// get the user folder valid themes and add to the size of validthemes
+	walk_directories(homedir, "", userfolderarray, userthemenamearray);
 	for (n = 0; n < userdirlength; n++)
 	{
-		//do stuff here later, but just print it for now
-		printf ("%s\n", userarray[n]);
+		if (strcmp(userfolderarray[n], "Empty")!= 0){
+			validthemes++;
+		}
+	}
+	// get the system folder valid themes and add to the size of validthemes
+	walk_directories("/usr/share/themes", "", systemfolderarray, systemthemenamearray);
+	for (n = 0; n < systemdirlength; n++)
+	{
+		if (strcmp(systemfolderarray[n], "Empty")!= 0){
+			validthemes++;
+		}
+	}
+	printf("Number of Valid index.themes is %i\n",validthemes);
+	// make two arrays with the length of the total number of themes to populate later
+	//gchar themes_id[validthemes][100];
+	//gchar themes_name[validthemes][100];
+	for (n = 0;  n < validthemes;  n++)
+		//printf("%i\n",n);
+		themes_id[n] = malloc (100);
+		themes_name[n] = malloc (100);
+
+	validthemes = 0;
+	for (n = 0; n < userdirlength; n++)
+	{
+		if (strcmp(userfolderarray[n], "Empty")!= 0){
+			f = strdup(themes_id[validthemes]);
+			strcpy(f, userfolderarray[n]);
+			themes_id[validthemes] = f;
+
+			g = g_strdup(themes_id[validthemes]);
+			g_strlcpy(g, userthemenamearray[n], 100);
+			themes_name[validthemes] = g;
+			validthemes++;
+		}
+	}
+	for (n = 0; n < systemdirlength; n++)
+	{
+		if (strcmp(systemfolderarray[n], "Empty")!= 0){
+			f = strdup(themes_id[validthemes]);
+			strcpy(f, systemfolderarray[n]);
+			themes_id[validthemes] = f;
+
+			g = g_strdup(themes_id[validthemes]);
+			g_strlcpy(g, systemthemenamearray[n], 100);
+			themes_name[validthemes] = g;
+			validthemes++;
+		}
 	}
 }
 
@@ -1334,7 +1402,7 @@ get_theme_data (const gchar *theme_name,
 {
   gchar *path;
   gchar *userpath;
-  GKeyFile *theme_file;
+  GKeyFile *theme_file = NULL;
   GError *error = NULL;
   gboolean result = FALSE;
 
@@ -1346,6 +1414,7 @@ get_theme_data (const gchar *theme_name,
   struct passwd *pw = getpwuid(getuid());
   const char *homedir = pw->pw_dir;
   userpath = g_build_filename (homedir, ".themes", theme_name, "index.theme", NULL);
+
   if (g_key_file_load_from_file (theme_file, path, G_KEY_FILE_NONE, &error))
     {
       //printf("%s\n", path);
@@ -1954,8 +2023,9 @@ cc_background_panel_init (CcBackgroundPanel *self)
   GtkWidget *widget;
   GtkListStore *store;
   GtkStyleContext *context;
-  /*my functions called*/
+  /*my function called*/
   populate_themes();
+  /*after my function called*/
 
   priv = self->priv = BACKGROUND_PANEL_PRIVATE (self);
 

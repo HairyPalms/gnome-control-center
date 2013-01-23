@@ -1,6 +1,6 @@
 2515b69edbd78db05db7a193263ffc27  usr/bin/gnome-control-center
 02a0ab4d460c1cf9e090065b8ec04b49  usr/bin/gnome-sound-applet
-9d68501196012a90edbf556646e1170c  usr/lib/control-center-1/panels/libbackground.so
+4cd11d3835e0f168b6086ba017f9c0e0  usr/lib/control-center-1/panels/libbackground.so
 976a8e47a8d8426260b43440eb89a339  usr/lib/control-center-1/panels/libbluetooth.so
 760ea49e023c8ad784437111fe3632de  usr/lib/control-center-1/panels/libcolor.so
 306319d252799ea0d75d25555da12283  usr/lib/control-center-1/panels/libdate_time.so
@@ -47,5 +47,5 @@ c1a888aebb8190651a4987a06ab10b82  usr/share/applications/gnome-user-accounts-pan
 c96aeeba9c14061d09ca1ba4dfe429a5  usr/share/doc/gnome-control-center/changelog.Debian.gz
 e2f013c544737aea3c2d2660577f73d9  usr/share/doc/gnome-control-center/changelog.gz
 bbf1a4f4f8b12e5ba0471f8f0d84bb0a  usr/share/doc/gnome-control-center/copyright
-eda95b102977d60dc5fd56a36079b163  usr/share/man/man1/gnome-control-center.1.gz
+0d56b084e19e49da674b5b6344e2ebc2  usr/share/man/man1/gnome-control-center.1.gz
 42d55a4cb875191aa2a6276f4f03fc03  usr/share/menu/gnome-control-center
